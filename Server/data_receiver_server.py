@@ -1,4 +1,3 @@
-from queue import Empty
 import socketserver
 import sqlite3
 
