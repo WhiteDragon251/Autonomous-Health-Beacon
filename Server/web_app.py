@@ -72,12 +72,12 @@ def patient_list(button):
   
   if len(name) != 0 :
     recv_id = result[0][0]
-    vital_signs(recv_id)
+    vital_signs()
   else:
     put_markdown("The name entered was not found in the list of patients registered")
     put_buttons(['Go Back'], onclick=options)
 
-def vital_signs(button):
+def vital_signs():
   global recv_id
   global go_back
   start = int(time())
