@@ -1,4 +1,3 @@
-from multiprocessing import connection
 from time import time
 from pywebio import start_server
 from pywebio.input import input_group
@@ -6,9 +5,6 @@ from pywebio.input import input as web_input
 from pywebio.output import clear, put_buttons, put_markdown, put_table
 import sqlite3
 
-
-connection_db = sqlite3.connect('vital_signs.db')
-mydb = connection_db.cursor()
 
 go_back = 0
 def program():
@@ -19,14 +15,12 @@ def program():
 
 def options(button):
   if button == 'View Vital Signs':
-    # vital_signs(button)
     patient_list(button)
   elif button == 'Register a patient':
     register()
   elif button == 'Go Back':
     program()
   
-# def add_patient_in_db(patient_dictionary):
 
 def register():
   clear()
@@ -46,13 +40,6 @@ def register():
     for key in patient_details:
       if patient_details[key] == '':
         patient_details[key] = default_values[key]
-
-    # print(patient_details)
-    # with open('patients.txt', 'a') as patients:
-      # patients.write('\n' + str(patient_details))
-
-    # with open('patients_name.txt', 'a') as patients_names:
-      # patients_names.write('\n' + str(patient_details['name']))
     
     connection_db = sqlite3.connect('vital_signs.db')
     mydb = connection_db.cursor()
@@ -76,14 +63,11 @@ def patient_list(button):
   global recv_id
   put_markdown("# Vital Sign Viewer")
   name = web_input('Enter the name of the patient whose details you want to view')
-  # with open('patients_name.txt', 'r') as patient_names:
-    # names = [ x.strip('\n') for x in patient_names.readlines()]
   
   connection_db = sqlite3.connect('vital_signs.db')
   mydb = connection_db.cursor()
   mydb.execute('select * from patients where name=?',(name,))
   result = mydb.fetchall()
-  # print(result)
   connection_db.close()
   
   if len(name) != 0 :
@@ -114,31 +98,21 @@ def vital_signs(button):
 
       result = [ list(x) for x in result]
       table.extend(result)
-      # print(table)
 
       clear()
       put_markdown("# Vital Sign Viewer")
       put_markdown("### The details of the Patient are given below")
       put_markdown(f"**Name of the patient:** {name}")
-      # Bring data from database and add in 'table'
       put_table(table)
-      # recv_bp = 'blank'
-      # recv_pulse = 'blank'
-      # recv_temp = 'blank'
-      # recv_rp = 'blank' # Respiration rate
-
-      # put_markdown(f"* **Name:** {recv_id}\n* **Blood pressure:** {recv_bp}\n* **Pulse rate:** {recv_pulse}\n* **Temperature:** {recv_temp}\n* **Respiration rate:** {recv_rp}")
 
       put_buttons(['Go Back'],onclick=check_to_go_back)
       refresh = 0
-      # print(f'Refresh: {refresh}')
-
+      
     elif int(time()) == (start + 10):
       refresh = 1
       start = int(time())
     elif go_back == 1:
       go_back = 0
-      # print('Go Back was pressed')
       break
   program()
     
